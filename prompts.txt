@@ -1,0 +1,4 @@
+- Baseado no projeto do git hub *link do git do front end*, crie um protótipo de um motor com
+as mesmas funcionalidades sendo elas: o login, criação de cadastro, bancos de atletas, 
+avaliações, dashboard, mensagens, perfil, inscrição em peneiras e as avaliações
+(Ela deixou tudo isso num menu de 6 opções e eu fui mechendo com base nisso)
