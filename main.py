@@ -14,7 +14,6 @@ PESOS = {
 OUTFIELD = {"finalizacao": "Finalização", "passe": "Passe", "tecnica": "Técnica e drible", "visao": "Visão de jogo", "marcacao": "Marcação e desarme", "posicionamento": "Posicionamento", "fisico": "Físico e velocidade"}
 GOALKEEPER = {"defesas": "Defesas e reflexos", "saidas": "Jogo aéreo e saídas", "posicionamento": "Posicionamento", "passe": "Passe e reposição", "fisico": "Físico e agilidade"}
 
-# Coleções em memória espelham as entidades usadas pela interface.
 contas = [{"id": 1, "nome": "Gabriel Martins", "nascimento": "2008-03-14", "idade": 18, "categoria": "Sub-20", "cpf": "11144477735", "email": "gabriel@academiapele.com", "senha": "Demo123!", "telefone": "(11) 99999-0000", "cep": "01000-000", "cidade": "São Paulo", "estado": "SP", "bairro": "Centro", "endereco": "Rua da Academia", "numero": "100", "posicao": "Atacante", "secundaria": "Ponta", "pe": "Destro", "avaliacoes": [], "role": "player"}]
 peneiras = []
 avaliacoes = []
@@ -27,6 +26,7 @@ funcionarios = [
 
 
 def ler_numero(pergunta, minimo=None, maximo=None):
+    """Repete a pergunta até receber um número dentro do intervalo permitido."""
     while True:
         valor = input(pergunta).strip()
         if valor.isdigit():
@@ -62,15 +62,15 @@ def categoria(idade):
 
 def cadastrar_atleta():
     print("\n=== Cadastro de jogador ===")
-    nome = input("Nome completo: ").strip()
-    nascimento = input("Data de nascimento (AAAA-MM-DD): ").strip()
+    nome = input("Como podemos chamar você? Informe seu nome completo: ").strip()
+    nascimento = input("Qual é sua data de nascimento? (AAAA-MM-DD): ").strip()
     idade = idade_de(nascimento)
     if not nome or idade is None or idade < 7 or idade > 20:
-        print("Cadastro não realizado: nome e data válida para idade entre 7 e 20 anos são obrigatórios.")
+        print("Não foi possível concluir o cadastro. Confira seu nome e a data de nascimento; aceitamos atletas de 7 a 20 anos.")
         return
     cpf = "".join(c for c in input("CPF (11 dígitos): ") if c.isdigit())
     if not cpf_valido(cpf) or any(a.get("cpf") == cpf for a in contas):
-        print("CPF inválido.")
+        print("Esse CPF não parece válido ou já está associado a outra conta. Confira os números e tente novamente.")
         return
     email = input("E-mail: ").strip().lower()
     if "@" not in email or any(a["email"] == email for a in contas):
@@ -78,7 +78,7 @@ def cadastrar_atleta():
         return
     senha = input("Senha (mínimo 6 caracteres): ")
     if len(senha) < 6:
-        print("A senha precisa ter pelo menos 6 caracteres.")
+        print("Escolha uma senha com pelo menos 6 caracteres para proteger sua conta.")
         return
     print("Posições:", ", ".join(POSICOES))
     posicao = input("Posição principal: ").strip().title()
@@ -94,11 +94,11 @@ def cadastrar_atleta():
     endereco = input("Endereço: ").strip()
     numero = input("Número: ").strip()
     if not all((telefone, cep, cidade, estado, bairro, endereco, numero)):
-        print("Preencha todo o endereço e telefone.")
+        print("Falta alguma informação de contato ou endereço. Preencha todos os campos para continuar.")
         return
     atleta = {"id": len(contas) + 1, "nome": nome, "nascimento": nascimento, "idade": idade, "categoria": categoria(idade), "cpf": cpf, "email": email, "senha": senha, "telefone": telefone, "cep": cep, "cidade": cidade, "estado": estado, "bairro": bairro, "endereco": endereco, "numero": numero, "posicao": posicao, "secundaria": secundaria, "pe": "Destro", "avaliacoes": [], "role": "player"}
     contas.append(atleta)
-    print(f"Cadastro concluído: {nome} — {atleta['categoria']}.")
+    print(f"Pronto, {nome}! Sua conta foi criada na categoria {atleta['categoria']}. Agora você já pode entrar.")
 
 
 def cpf_valido(cpf):
@@ -148,7 +148,7 @@ def criar_peneira():
         print("Selecione pelo menos uma posição válida.")
         return
     peneiras.append({"id": len(peneiras) + 1, "titulo": titulo, "data": data, "horario": horario, "local": locais[escolha - 1], "vagas": vagas, "inscritos": [], "posicoes": posicoes})
-    print("Peneira criada.")
+    print("Peneira publicada! Os jogadores já podem encontrar essa oportunidade.")
 
 
 def inscrever_peneira(email=None):
@@ -229,8 +229,9 @@ def enviar_mensagem():
 
 
 def menu_funcionario(funcionario):
+    """Mostra as ferramentas de trabalho disponíveis para funcionários."""
     while True:
-        print(f"\n=== Área do funcionário: {funcionario['nome']} ({funcionario['cargo']}) ===")
+        print(f"\n=== Olá, {funcionario['nome']}! | Área de {funcionario['cargo']} ===")
         print("1. Banco de atletas  2. Criar/agendar peneira  3. Avaliar atleta")
         print("4. Dashboard         5. Enviar mensagem       0. Sair da conta")
         opcao = input("Escolha: ").strip()
@@ -245,14 +246,16 @@ def menu_funcionario(funcionario):
         elif opcao == "5":
             enviar_mensagem()
         elif opcao == "0":
+            print("Você saiu da sua conta. Até a próxima!")
             break
         else:
-            print("Opção inválida.")
+            print("Não entendi essa opção. Escolha um dos números do menu, por favor.")
 
 
 def menu_jogador(atleta):
+    """Mostra ao jogador seu perfil, oportunidades e avaliações recebidas."""
     while True:
-        print(f"\n=== Área do jogador: {atleta['nome']} ===")
+        print(f"\n=== Olá, {atleta['nome']}! Que bom ter você por aqui. ===")
         print("1. Meu perfil  2. Ver peneiras e me inscrever  3. Minhas avaliações")
         print("4. Enviar mensagem  0. Sair da conta")
         opcao = input("Escolha: ").strip()
@@ -269,25 +272,29 @@ def menu_jogador(atleta):
         elif opcao == "4":
             enviar_mensagem()
         elif opcao == "0":
+            print("Você saiu da sua conta. Até a próxima!")
             break
         else:
-            print("Opção inválida.")
+            print("Não entendi essa opção. Escolha um dos números do menu, por favor.")
 
 
 def autenticar():
+    """Apresenta o acesso e encaminha cada pessoa à sua própria área."""
     while True:
-        print("\n=== Academia Pelé | Acesso ===")
-        print("1. Entrar  2. Criar conta de jogador  0. Encerrar")
+        print("\n=== Bem-vindo à Academia Pelé ===")
+        print("O que você gostaria de fazer?")
+        print("1. Entrar na minha conta  2. Criar uma conta de jogador  0. Encerrar")
         print("Acesso de teste funcionário: funcionario@academiapele.com / Academia123!")
         print("Acesso de teste jogador: gabriel@academiapele.com / Demo123!")
         opcao = input("Escolha: ").strip()
         if opcao == "0":
+            print("Obrigado por visitar a Academia Pelé. Até logo!")
             return
         if opcao == "2":
             cadastrar_atleta()
             continue
         if opcao != "1":
-            print("Opção inválida.")
+            print("Não entendi essa opção. Escolha um dos números do menu, por favor.")
             continue
         email = input("E-mail: ").strip().lower()
         senha = input("Senha: ")
@@ -299,7 +306,7 @@ def autenticar():
         if atleta:
             menu_jogador(atleta)
             continue
-        print("E-mail ou senha incorretos.")
+        print("Não encontramos uma conta com esses dados. Confira o e-mail e a senha e tente de novo.")
 
 
 if __name__ == "__main__":
