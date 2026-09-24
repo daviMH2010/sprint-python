@@ -281,33 +281,34 @@ def menu_jogador(atleta):
 def autenticar():
     """Apresenta o acesso e encaminha cada pessoa à sua própria área."""
     while True:
-        print("\n=== Bem-vindo à Academia Pelé ===")
+        print()
+        print("=== Bem-vindo à Academia Pelé ===")
         print("O que você gostaria de fazer?")
         print("1. Entrar na minha conta  2. Criar uma conta de jogador  0. Encerrar")
         print("Acesso de teste funcionário: funcionario@academiapele.com / Academia123!")
         print("Acesso de teste jogador: gabriel@academiapele.com / Demo123!")
         opcao = input("Escolha: ").strip()
+
         if opcao == "0":
             print("Obrigado por visitar a Academia Pelé. Até logo!")
             return
-        if opcao == "2":
+        elif opcao == "2":
             cadastrar_atleta()
-            continue
-        if opcao != "1":
-            print("Não entendi essa opção. Escolha um dos números do menu, por favor.")
-            continue
-        email = input("E-mail: ").strip().lower()
-        senha = input("Senha: ")
-        funcionario = next((f for f in funcionarios if f["email"] == email and f["senha"] == senha), None)
-        if funcionario:
-            menu_funcionario(funcionario)
-            continue
-        atleta = next((a for a in contas if a["email"] == email and a["senha"] == senha), None)
-        if atleta:
-            menu_jogador(atleta)
-            continue
-        print("Não encontramos uma conta com esses dados. Confira o e-mail e a senha e tente de novo.")
+        elif opcao == "1":
+            email = input("E-mail: ").strip().lower()
+            senha = input("Senha: ")
+            funcionario = next((f for f in funcionarios if f["email"] == email and f["senha"] == senha), None)
 
+            if funcionario:
+                menu_funcionario(funcionario)
+            else:
+                atleta = next((a for a in contas if a["email"] == email and a["senha"] == senha), None)
+                if atleta:
+                    menu_jogador(atleta)
+                else:
+                    print("Não encontramos uma conta com esses dados. Confira o e-mail e a senha e tente de novo.")
+        else:
+            print("Não entendi essa opção. Escolha um dos números do menu, por favor.")
 
 if __name__ == "__main__":
     autenticar()
